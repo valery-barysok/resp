@@ -6,12 +6,16 @@ import (
 	"io"
 )
 
+// Writer implements buffering for an io.Writer object.
+// After all data has been written, the client should call the
+// Flush method to guarantee all data has been forwarded to
+// the underlying io.Writer.
 type Writer struct {
 	protocol *Protocol
 	bw       *bufio.Writer
-	err      error
 }
 
+// NewWriter returns a new Writer with provided protocol.
 func NewWriter(w io.Writer, protocol *Protocol) *Writer {
 	return &Writer{
 		protocol: protocol,
@@ -20,18 +24,15 @@ func NewWriter(w io.Writer, protocol *Protocol) *Writer {
 }
 
 func (resp *Writer) WriteOK() error {
-	resp.err = resp.protocol.WriteOK(resp.bw)
-	return resp.err
+	return resp.protocol.WriteOK(resp.bw)
 }
 
 func (resp *Writer) WriteEmptyBulk() error {
-	resp.err = resp.protocol.WriteEmptyBulk(resp.bw)
-	return resp.err
+	return resp.protocol.WriteEmptyBulk(resp.bw)
 }
 
 func (resp *Writer) WriteZero() error {
-	resp.err = resp.protocol.WriteZero(resp.bw)
-	return resp.err
+	return resp.protocol.WriteZero(resp.bw)
 }
 
 func (resp *Writer) WriteOne() error {
@@ -67,8 +68,7 @@ func (resp *Writer) WriteNotImplementedError(cmd string) error {
 }
 
 func (resp *Writer) WriteSimpleString(s string) error {
-	err := resp.protocol.WriteSimpleString(resp.bw, s)
-	return err
+	return resp.protocol.WriteSimpleString(resp.bw, s)
 }
 
 func (resp *Writer) WriteError(err error) error {
@@ -99,6 +99,6 @@ func (resp *Writer) WriteCmd(cmd []byte, args ...[]byte) error {
 	return resp.protocol.WriteCmd(resp.bw, cmd, args...)
 }
 
-func (resp *Writer) End() error {
-	return resp.protocol.End(resp.bw)
+func (resp *Writer) Flush() error {
+	return resp.protocol.Flush(resp.bw)
 }

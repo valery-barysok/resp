@@ -398,7 +398,7 @@ func (protocol *Protocol) arrayItem(line []byte, br *bufio.Reader) (*Item, error
 	}, nil
 }
 
-func (protocol *Protocol) End(bw *bufio.Writer) error {
+func (protocol *Protocol) Flush(bw *bufio.Writer) error {
 	if protocol.wlogger != nil && protocol.wlogger.Len() > 0 {
 		log.Printf("W: %s", string(protocol.wlogger.Bytes()))
 		protocol.wlogger.Reset()
