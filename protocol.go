@@ -289,7 +289,7 @@ func writeString(bw *bufio.Writer, s string) error {
 	return err
 }
 
-func (protocol *Protocol) nextItem(br *bufio.Reader) (*Item, error) {
+func (protocol *Protocol) Read(br *bufio.Reader) (*Item, error) {
 	lineType, line, err := protocol.readLine(br)
 	if err != nil {
 		return nil, err
@@ -385,7 +385,7 @@ func (protocol *Protocol) arrayItem(line []byte, br *bufio.Reader) (*Item, error
 
 	items := make([]*Item, l)
 	for i := range items {
-		item, err := protocol.nextItem(br)
+		item, err := protocol.Read(br)
 		if err != nil {
 			return nil, err
 		}
