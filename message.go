@@ -5,50 +5,50 @@ type Message struct {
 	Value interface{}
 }
 
-func (item *Message) IsNil() bool {
-	return item.Value == nil
+func (msg *Message) IsNil() bool {
+	return msg.Value == nil
 }
 
-func (item *Message) IsString() bool {
-	return item.Type == simpleStringType
+func (msg *Message) IsString() bool {
+	return msg.Type == simpleStringType
 }
 
-func (item *Message) IsError() bool {
-	return item.Type == errorType
+func (msg *Message) IsError() bool {
+	return msg.Type == errorType
 }
 
-func (item *Message) IsInt() bool {
-	return item.Type == integerType
+func (msg *Message) IsInt() bool {
+	return msg.Type == integerType
 }
 
-func (item *Message) IsBulkString() bool {
-	return item.Type == bulkStringType
+func (msg *Message) IsBulkString() bool {
+	return msg.Type == bulkStringType
 }
 
-func (item *Message) IsArray() bool {
-	return item.Type == arrayType
+func (msg *Message) IsArray() bool {
+	return msg.Type == arrayType
 }
 
-func (item *Message) String() string {
-	return item.Value.(string)
+func (msg *Message) String() string {
+	return msg.Value.(string)
 }
 
-func (item *Message) Err() error {
-	return item.Value.(error)
+func (msg *Message) Err() error {
+	return msg.Value.(error)
 }
 
-func (item *Message) Int() int {
-	return item.Value.(int)
+func (msg *Message) Int() int {
+	return msg.Value.(int)
 }
 
-func (item *Message) BulkString() []byte {
-	return item.Value.([]byte)
+func (msg *Message) BulkString() []byte {
+	return msg.Value.([]byte)
 }
 
-func (item *Message) Array() []*Message {
-	return item.Value.([]*Message)
+func (msg *Message) Array() []*Message {
+	return msg.Value.([]*Message)
 }
 
-func (item *Message) Raw() interface{} {
-	return item.Value
+func (msg *Message) Raw() interface{} {
+	return msg.Value
 }

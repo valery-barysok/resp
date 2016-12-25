@@ -158,8 +158,8 @@ func (protocol *Protocol) WriteBulkString(bw *bufio.Writer, s []byte) error {
 	return nil
 }
 
-func (protocol *Protocol) Write(bw *bufio.Writer, item *Message) error {
-	return protocol.writeRaw(bw, item)
+func (protocol *Protocol) Write(bw *bufio.Writer, msg *Message) error {
+	return protocol.writeRaw(bw, msg)
 }
 
 func (protocol *Protocol) writeRaw(bw *bufio.Writer, value interface{}) error {
@@ -297,35 +297,35 @@ func (protocol *Protocol) Read(br *bufio.Reader) (*Message, error) {
 
 	switch lineType {
 	case simpleStringType:
-		return protocol.simpleStringItem(line[1:])
+		return protocol.simpleStringMsg(line[1:])
 	case errorType:
-		return protocol.errorItem(line[1:])
+		return protocol.errorMsg(line[1:])
 	case integerType:
-		return protocol.integerItem(line[1:])
+		return protocol.integerMsg(line[1:])
 	case bulkStringType:
-		return protocol.bulkStringItem(line[1:], br)
+		return protocol.bulkStringMsg(line[1:], br)
 	case arrayType:
-		return protocol.arrayItem(line[1:], br)
+		return protocol.arrayMsg(line[1:], br)
 	default:
 		return nil, errInlineCommandNotImplemented
 	}
 }
 
-func (protocol *Protocol) simpleStringItem(line []byte) (*Message, error) {
+func (protocol *Protocol) simpleStringMsg(line []byte) (*Message, error) {
 	return &Message{
 		Type:  simpleStringType,
 		Value: string(line),
 	}, nil
 }
 
-func (protocol *Protocol) errorItem(line []byte) (*Message, error) {
+func (protocol *Protocol) errorMsg(line []byte) (*Message, error) {
 	return &Message{
 		Type:  errorType,
 		Value: errors.New(string(line)),
 	}, nil
 }
 
-func (protocol *Protocol) integerItem(line []byte) (*Message, error) {
+func (protocol *Protocol) integerMsg(line []byte) (*Message, error) {
 	val, err := strconv.Atoi(string(line))
 	if err != nil {
 		return nil, err
@@ -337,7 +337,7 @@ func (protocol *Protocol) integerItem(line []byte) (*Message, error) {
 	}, nil
 }
 
-func (protocol *Protocol) bulkStringItem(length []byte, br *bufio.Reader) (*Message, error) {
+func (protocol *Protocol) bulkStringMsg(length []byte, br *bufio.Reader) (*Message, error) {
 	ln, err := strconv.Atoi(string(length))
 	if err != nil {
 		return nil, err
@@ -370,7 +370,7 @@ func (protocol *Protocol) bulkStringItem(length []byte, br *bufio.Reader) (*Mess
 	}, nil
 }
 
-func (protocol *Protocol) arrayItem(line []byte, br *bufio.Reader) (*Message, error) {
+func (protocol *Protocol) arrayMsg(line []byte, br *bufio.Reader) (*Message, error) {
 	l, err := strconv.Atoi(string(line))
 	if err != nil {
 		return nil, err
@@ -383,18 +383,18 @@ func (protocol *Protocol) arrayItem(line []byte, br *bufio.Reader) (*Message, er
 		}, nil
 	}
 
-	items := make([]*Message, l)
-	for i := range items {
-		item, err := protocol.Read(br)
+	msgs := make([]*Message, l)
+	for i := range msgs {
+		msg, err := protocol.Read(br)
 		if err != nil {
 			return nil, err
 		}
-		items[i] = item
+		msgs[i] = msg
 	}
 
 	return &Message{
 		Type:  arrayType,
-		Value: items,
+		Value: msgs,
 	}, nil
 }
 
