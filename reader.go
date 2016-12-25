@@ -5,7 +5,7 @@ import (
 	"io"
 )
 
-// Reader implements reading of resp items from provided underlying io.Reader
+// Reader implements reading of messages from provided underlying io.Reader
 type Reader struct {
 	protocol *Protocol
 	br       *bufio.Reader
@@ -19,8 +19,7 @@ func NewReader(r io.Reader, protocol *Protocol) *Reader {
 	}
 }
 
-// Read reads next resp Item.
-// It returns resp Item if success and error if not.
-func (reader *Reader) Read() (*Item, error) {
+// Read reads and returns Message if success, otherwise error.
+func (reader *Reader) Read() (*Message, error) {
 	return reader.protocol.Read(reader.br)
 }

@@ -23,7 +23,7 @@ func NewWriter(w io.Writer, protocol *Protocol) *Writer {
 	}
 }
 
-func (resp *Writer) Write(item *Item) error {
+func (resp *Writer) Write(item *Message) error {
 	return resp.protocol.Write(resp.bw, item)
 }
 
